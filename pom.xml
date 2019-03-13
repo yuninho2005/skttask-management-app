@@ -35,6 +35,14 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Without lambda expressions support -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>4.2.5</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
