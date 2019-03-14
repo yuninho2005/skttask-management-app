@@ -1,0 +1,40 @@
+zookeeper:
+  image: saumitras01/zookeeper:v3.4.9
+  ports:
+    - "2181:2181"
+
+kafkaserver:
+  image: saumitras01/kafka:latest
+  ports:
+    - "9092:9092"
+  depends_on:
+    - zookeeper
+  environment:
+    KAFKA_ADVERTISED_HOST_NAME: kafka
+    KAFKA_ADVERTISED_PORT: "9092"
+    KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock # Really need this?
+
+
+tomcatserver:
+  image: mvpjava/springboot_docker_tomcat_mongodb # Change this to mine
+  container_name: tomcat
+  links:
+    - kafkaserver:kafka
+  ports:
+    - 8080
+  hostname: tomcat
+
+browser: # Adapted from a tutorial that were using firefox. Review all.
+  image: selenoid/chrome
+  container_name: chrome
+  links:
+    - tomcatserver:tomcat
+  hostname: chrome
+  environment:
+    - DISPLAY
+  volumes:
+    - /tmp/.X11-unix:/tmp/.X11-unix
+    - $HOME:/home
+  command: --new-instance tomcat:8080/
